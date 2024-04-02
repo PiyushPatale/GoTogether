@@ -9,7 +9,7 @@ class Header extends Component {
         const isUserStaff = UserServiceApi.isUserStaff();
         return (
             <Navbar bg="light" expand="lg">
-                <Navbar.Brand href="/">Car Share</Navbar.Brand>
+                <Navbar.Brand href="/">GoTogether</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="container-fluid">

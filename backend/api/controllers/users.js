@@ -10,6 +10,7 @@ const selectFields = '_id firstname lastname email password usertype';
 // create a user object
 exports.create_user = (req, res, next) => {
     // check if user with the same email exists
+
     User.findOne({ email: req.body.email }).then(user => {
         if (user) {
             // return error if user with the same email exists
@@ -55,6 +56,9 @@ exports.login_user = (req, res) => {
     // obtain email and password from request body
     const email = req.body.email;
     const password = req.body.password;
+
+    console.log(email);
+    console.log(password);
 
     // check if user exists by email
     User.findOne({ email }).then(user => {

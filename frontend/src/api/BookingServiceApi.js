@@ -1,8 +1,8 @@
 /* Booking service APIs */
 import axios from 'axios';
 import UserServiceApi from './UserServiceApi';
-require('dotenv').config();
-const api_url = "http://localhost:3001/api/bookings";
+//require('dotenv').config();
+const api_url = "http://localhost:3000/api/bookings";
 
 class BookingServiceApi {
     getNextBooking() {
@@ -34,4 +34,6 @@ class BookingServiceApi {
     }
 }
 
-export default new BookingServiceApi();
+const bsa = new BookingServiceApi();
+export default bsa;
+// export default BookingServiceApi();

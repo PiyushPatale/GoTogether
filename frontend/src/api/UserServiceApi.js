@@ -2,7 +2,7 @@
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 
-const api_url = process.env.server_url || "http://localhost:3001/api/users";
+const api_url = "http://localhost:7000/api/users";
 
 // for user JWT storage
 export const TOKEN_SESSION_ATTRIBUTE_NAME = 'token';
@@ -101,4 +101,7 @@ class UserServiceApi {
     }
 }
 
-export default new UserServiceApi();
+
+const UserServiceApi1 = new UserServiceApi();
+export default UserServiceApi1;
+// export default new UserServiceApi();

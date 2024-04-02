@@ -79,7 +79,7 @@ export default class CreateLocation extends Component {
         // initialise address autocomplete api
         window.initMap = this.initMap;
         const gmapScriptEl = document.createElement(`script`);
-        gmapScriptEl.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.REACT_APP_API_KEY}&libraries=places&callback=initMap`;
+        gmapScriptEl.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyBmeuhvxNYOo93ltxcFL23e7jACR8DOjmg&libraries=places&callback=initMap`;
         document.querySelector(`body`).insertAdjacentElement(`beforeend`, gmapScriptEl);
     }
 
