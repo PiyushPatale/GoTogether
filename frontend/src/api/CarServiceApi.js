@@ -1,7 +1,7 @@
 /* Car service APIs */
 import axios from 'axios';
 //require('dotenv').config();
-const api_url = "http://localhost:3000/api/cars";
+const api_url = "http://localhost:7000/api/cars";
 
 class CarServiceApi {
     createNewCar(newCar) {

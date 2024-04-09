@@ -31,16 +31,15 @@ export default class landingBody extends Component {
             <div id="landing-body">
                 <Nav id="landing-body-nav" className="justify-content-center" activeKey="/home">
                     <Nav.Item onClick={this.handleClick.bind(this)} style={(component === "Overview") ? navWhenSelectedStyle : {} }>
-                        <Nav.Link className="nav-link">Overview</Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item onClick={this.handleClick.bind(this)} style={(component === "Cars") ? navWhenSelectedStyle : {}}>
-                        <Nav.Link className="nav-link">Cars</Nav.Link>
+                        <Nav.Link className="nav-link-ofaq">Overview</Nav.Link>
                     </Nav.Item>
                     <Nav.Item onClick={this.handleClick.bind(this)} style={(component === "FAQs") ? navWhenSelectedStyle : {}}>
-                        <Nav.Link className="nav-link">FAQs</Nav.Link>
+                        <Nav.Link className="nav-link-ofaq">FAQs</Nav.Link>
                     </Nav.Item>
                 </Nav>
-                <RenderCorrectComponents component={this.state.component} />
+                <div id='landing-body-body'>
+                    <RenderCorrectComponents component={this.state.component} />
+                </div>
             </div>
         )
     }

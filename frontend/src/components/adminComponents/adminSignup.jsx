@@ -9,6 +9,7 @@ class AdminSignUpPage extends Component {
         this.state = {
             firstname: '',
             lastname: '',
+            phone: '',
             email: '',
             password: '',
             usertype: '',
@@ -30,6 +31,7 @@ class AdminSignUpPage extends Component {
             firstname: this.state.firstname.trim(),
             lastname: this.state.lastname.trim(),
             email: this.state.email,
+            phone: this.state.phone,
             password: this.state.password,
             usertype: this.state.usertype
         };
@@ -88,6 +90,14 @@ class AdminSignUpPage extends Component {
                         </Form.Label>
                         <Col sm={10}>
                             <Form.Control name="lastname" type="lastname" placeholder="Last Name" onChange={this.handleChange} required />
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} controlId="formHorizontalLastName">
+                        <Form.Label column sm={2}>
+                            Phone Number
+                        </Form.Label>
+                        <Col sm={10}>
+                            <Form.Control name="phone" type="phone" placeholder="Phone Number" onChange={this.handleChange} required />
                         </Col>
                     </Form.Group>
 

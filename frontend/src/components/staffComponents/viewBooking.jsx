@@ -158,7 +158,7 @@ class ViewBookingPage extends Component {
                                 <img src={this.state.car.image} alt="car" width="100" />
                                 <h2 style={{ marginTop: '1vh' }}>{this.state.car.make}</h2>
                                 <p>{this.state.car.fueltype}, {this.state.car.bodytype}, {this.state.car.seats} seaters, {this.state.car.colour}</p>
-                                <h5>${this.state.car.costperhour} per hour</h5>
+                                <h5>₹{this.state.car.costperhour} per hour</h5>
                                 <h5>Number Plate: {this.state.car.numberplate}</h5>
                                 <a href={`/admin/view/cars/${this.state.car._id}`}><b>Car ID: </b>{this.state.car._id}</a>
                             </div>

@@ -1,0 +1,18 @@
+.nav-item {
+    display: flex;
+}
+
+.header-menu {
+    display: flex;
+}
+  
+.navbar-nav .nav-link {
+margin-right: 20px; /* Adjust as needed */
+color: #000000; /* Text color for nav links */
+}
+
+.navbar-nav .nav-link:hover {
+background-color: #d5d5d5; /* Background color on hover */
+border-radius: 5px; /* Rounded corners on hover */
+}
+  

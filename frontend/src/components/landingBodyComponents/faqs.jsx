@@ -1,5 +1,5 @@
 /* FAQs component in landing page */
-import React, { Component } from 'react';
+import React, { Component , useState }  from 'react';
 import { Accordion, Card, Button } from 'react-bootstrap';
 
 export default class Faqs extends Component {
@@ -9,11 +9,11 @@ export default class Faqs extends Component {
                 <div>
                     <h2>FAQs</h2>
                     <Accordion style={{ marginTop: '7vh' }}>
-                        <AccordionCustom eventKey="1" question="How do I book a vehicle?" answer="Signup for an account if you haven't already, login and click on Dashboard to get started!" />
-                        <AccordionCustom eventKey="2" question="How do I unlock a vehicle when it's time?" answer="Head over to Dashboard and select the Pickup button, it's that easy!" />
-                        <AccordionCustom eventKey="3" question="How do I return when I'm done?" answer="Head over to Dashboard and select the Return button and you're good to go!" />
-                        <AccordionCustom eventKey="4" question="Can I cancel my bookings prior pickup time?" answer="Yes most definitely! You can do it through My Bookings dashboard." />
-                        <AccordionCustom eventKey="5" question="Can I smoke in your cars?" answer="Smoking is prohibited and will incur a $300 penalty if found guilty." />
+                        <AccordionCustom  question="How does the booking process work?" answer="To book a trip, simply log in to your account and enter your desired destination in the search bar!" />
+                        <AccordionCustom  question="What safety measures are in place for passengers and drivers?" answer="Our drivers undergo thorough background checks and their vehicles are inspected to ensure they meet safety standards. Additionally, we provide comprehensive insurance coverage for every trip. !" />
+                        <AccordionCustom  question="Can I cancel or modify my booking?" answer="Yes, you can cancel or modify your booking. Simply navigate to your booking details in your account dashboard and follow the prompts to cancel or modify your trip!" />
+                        <AccordionCustom  question="What if I can't find a trip to my desired destination?" answer="If you can't find a trip to your desired destination, you can submit a trip request specifying your destination, preferred departure time, and any other relevant details" />
+                        <AccordionCustom  question="Can I smoke in your cars?" answer="Smoking is prohibited and will result in a penalty if found guilty." />
                     </Accordion>
                 </div>
             </section>
@@ -23,16 +23,17 @@ export default class Faqs extends Component {
 
 function AccordionCustom(props) {
     // FAQ render element
-    const { eventKey, question, answer } = props
+    const { question, answer } = props
+    const [isOpen, setIsOpen] = useState(false);
     return (
-        <Card style={{ marginBottom: '3vh' }}>
-            <Card.Header>
-                <Accordion.Toggle as={Button} variant="link" eventKey={eventKey}>
+        <Card style={{ marginBottom: '3vh' , cursor:'pointer' }} onClick={() => setIsOpen(!isOpen)}>
+            <Card.Header >
+                <Accordion>
                     {question}
-                </Accordion.Toggle>
+                </Accordion>
             </Card.Header>
-            <Accordion.Collapse eventKey={eventKey}>
-                <Card.Body>{answer}</Card.Body>
+            <Accordion.Collapse in={isOpen}>
+                <Card.Body style={{backgroundColor:'##ffffff', padding:'15px', borderRadius:'20px'}}>{answer}</Card.Body>
             </Accordion.Collapse>
         </Card>
     );

@@ -5,17 +5,14 @@ import Header from './components/header';
 import LandingPage from './components/landing';
 import SignUpPage from './components/signup';
 import LoginPage from './components/login';
-import MapContainer from './components/map';
 import UserServiceApi from './api/UserServiceApi';
 import AuthenticatedRoute from './AuthenticatedRoute';
 import StaffRoute from './StaffRoute.jsx'
 import LocationShowPage from './components/locationShow';
-import Footer from './components/footer';
 import FilterCarsPage from './components/bookingComponents/filterCars';
-import BookingDashboard from './components/bookingComponents/bookingDashboard';
-import MyBookingPage from './components/bookingComponents/myBookings';
 import BookingDetailsPage from './components/bookingComponents/bookingDetails';
 import MyProfilePage from './components/myProfile';
+import CreateTrip from './components/CreateTrip'
 
 /* Import admin and staff components */
 import Overview from './components/staffComponents/overview';
@@ -33,9 +30,12 @@ import ModifyCarDetailsPage from './components/staffComponents/modifyCarDetails'
 import ViewAllLocations from './components/staffComponents/viewAllLocations';
 import ViewLocation from './components/staffComponents/ViewLocation';
 import ModifyLocationPage from './components/staffComponents/modifyLocationPage';
+import AboutUs from "./components/AboutUs.jsx";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
+import SearchTrip from './components/SearchTrip.jsx';
+import MyTrips from './components/MyTrip.jsx';
 
 class App extends Component {
   state = {
@@ -69,16 +69,16 @@ class App extends Component {
           <Route path="/signup" component={SignUpPage} />
           <Route path="/login" component={LoginPage} />
           <Route path="/locations/:id" component={LocationShowPage} />
-          <Route path="/locations" component={MapContainer} />
+          <Route path="/locations" component={CreateTrip} />
+          <Route path="/aboutus" component={AboutUs} />
           {/* Customers only routes */}
           {!isUserStaff && <AuthenticatedRoute path="/filter" component={(props) => <FilterCarsPage {...props}
             availableCars={availableCars}
             pickupTime={pickupTime}
             returnTime={returnTime} />} />}
-          {!isUserStaff && <AuthenticatedRoute path="/dashboard" component={(props) => <BookingDashboard {...props}
-            updateCars={this.updateCars.bind(this)} />} />}
+          {!isUserStaff && <AuthenticatedRoute path="/dashboard" component={SearchTrip} />}
           {!isUserStaff && <AuthenticatedRoute path="/mybookings/:id" component={BookingDetailsPage} />}
-          {!isUserStaff && <AuthenticatedRoute path="/mybookings" component={MyBookingPage} />}
+          {!isUserStaff && <AuthenticatedRoute path="/mybookings" component={MyTrips} />}
           {!isUserStaff && <AuthenticatedRoute path="/myprofile" component={MyProfilePage} />}
           {/* Staff and admin only routes */}
           <StaffRoute path="/staff" component={Overview} />
@@ -97,7 +97,7 @@ class App extends Component {
           <StaffRoute path="/admin/view/location/:id" component={ViewLocation} />
           <StaffRoute path="/admin/view/location" component={ViewAllLocations} />
         </Switch>
-        <Footer />
+        {/* <Footer /> */}
       </Router>
     );
   }

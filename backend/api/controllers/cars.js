@@ -7,16 +7,12 @@ const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
 const bookingSelectFields = '_id user car bookedtime pickuptime returntime cost location status';
 const selectFields = '_id make seats bodytype numberplate colour costperhour fueltype location currentbooking image';
-
-/* CONTROLLERS WITHOUT JWT GUARDING */
 // get all cars from system
 exports.get_all_cars = (req, res, next) => {
-    // get all cars from database
     Car.find()
         .select(selectFields)
         .exec()
         .then(cars => {
-            // wrap and return car objects in response
             const response = {
                 cars: cars.map(car => {
                     return {
@@ -44,7 +40,6 @@ exports.get_all_cars = (req, res, next) => {
 
 // get a particular car by id
 exports.get_car = (req, res, next) => {
-    // obtain car id from request parameters
     const id = req.params.carId;
 
     // get car by id from database
@@ -59,15 +54,12 @@ exports.get_car = (req, res, next) => {
             res.status(200).json(response);
         })
         .catch(error => {
-            // return error if there's any
             res.status(500).json({ message: `Unable to GET car of id '${id}'`, error: error });
         });
 }
 
-/* CONTROLLERS WITH JWT GUARDING */
 // create car object
 exports.create_car = (req, res, next) => {
-    // obtain JWT from authorization header and remove Bearer keyword
     var token = req.headers['authorization'].replace(/^Bearer\s/, '');
 
     if (!token)
@@ -77,14 +69,12 @@ exports.create_car = (req, res, next) => {
     // attempt to verify JWT
     jwt.verify(token, keys.secretOrKey, function (err, decoded) {
         if (err)
-            // return error if JWT is invalid
             return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 
         // restrict feature to staff only
         if (decoded.usertype !== 'staff' && decoded.usertype !== 'admin') {
-            return res.status(500).json({ message: `Unable to perform action, you have to be staff member!` });
+            return res.status(500).json({ message: `Unable to perform create car action, you have to be staff member!` });
         } else {
-            // get location by car's pickup/return spot
             Location.findOne({ address: req.body.location }).then(location => {
                 // create a car object
                 const car = new Car({
@@ -136,7 +126,7 @@ exports.delete_car = (req, res, next) => {
             return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
         // restrict feature to staff only
         if (decoded.usertype !== 'staff' && decoded.usertype !== 'admin') {
-            return res.status(500).json({ message: `Unable to perform action, you have to be staff member!` });
+            return res.status(500).json({ message: `Unable to perform delete car action, you have to be staff member!` });
         } else {
             // obtain car id from request parameters
             const id = req.params.carId;
@@ -162,37 +152,27 @@ exports.delete_car = (req, res, next) => {
 
 // update a car object by id
 exports.update_car = (req, res, next) => {
-    // obtain JWT from authorization header and remove Bearer keyword
     var token = req.headers['authorization'].replace(/^Bearer\s/, '');
 
     if (!token)
-        // return 401 response if JWT doesn't exist in request
         return res.status(401).send({ auth: false, message: 'No token provided.' });
 
     // attempt to verify JWT
     jwt.verify(token, keys.secretOrKey, function (err, decoded) {
         if (err)
-            // return error if JWT is invalid
             return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-
-        // restrict feature to staff only
         if (decoded.usertype !== 'staff' && decoded.usertype !== 'admin') {
-            return res.status(500).json({ message: `Unable to perform action, you have to be staff member!` });
+            return res.status(500).json({ message: `Unable to perform update car action, you have to be staff member!` });
         } else {
-            // obtain car id from request parameters
             const id = req.params.carId;
-            // obtaining updated values in request body
             const updateOps = {};
             for (const ops of Object.entries(req.body)) {
                 updateOps[ops[0]] = ops[1];
             }
-
-            // update car by id with updated values
             Car.update({ _id: id }, { $set: updateOps })
                 .select(selectFields)
                 .exec()
                 .then(car => {
-                    // wrap and return car object in response
                     const response = {
                         message: `Updated car of id '${car._id}' successfully`,
                         car: car
@@ -200,54 +180,40 @@ exports.update_car = (req, res, next) => {
                     res.status(200).json({ response });
                 })
                 .catch(error => {
-                    // return error if there's any
                     res.status(500).json({ message: `Unable to UPDATE car of id '${id}'`, error: error });
                 });
         }
     });
 }
 
-// search for available cars in specific timeframe
-exports.search_available_cars = (req, res, next) => {
-    // search_available_cars returns all available cars in specified time range
-    // obtain JWT from authorization header and remove Bearer keyword
-    var token = req.headers['authorization'].replace(/^Bearer\s/, '');
+exports.search_available_cars = async (req, res, next) => {
+    try {
+        const { from, to, startTime } = req.body;
 
-    if (!token)
-        // return 401 response if JWT doesn't exist in request
-        return res.status(401).send({ auth: false, message: 'No token provided.' });
+        startTimeString = startTime.toLocaleString();
 
-    // attempt to verify JWT
-    jwt.verify(token, keys.secretOrKey, function (err, decoded) {
-        if (err)
-            // return error if JWT is invalid
-            return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        // Find locations asynchronously
+        const locations = await Location.find({ from, to });
 
-        // construct date objects for pickup and return time
-        const pickupTime = new Date(req.body.pickupTime);
-        const returnTime = new Date(req.body.returnTime);
+        // Array to store available cars
+        let availableCars = [];
 
-        // validate pickup and return time
-        if (pickupTime >= returnTime) {
-            return res.status(400).json({ message: "Invalid date range! Please try again." })
-        } else if (pickupTime < Date.now()) {
-            return res.status(400).json({ message: "Time must be in the future! Please try again." });
+        // Iterate through each location
+        for (const location of locations) {
+            // Find available cars for each location
+            const cars = await Location.find({ from: location.from, to: location.to });
+            availableCars = [...availableCars, ...cars];
         }
 
-        // get all available cars within the period
-        Car.find().select(selectFields).exec().then((cars) => {
-            searchForAvailableCars(pickupTime, returnTime, cars).then(availableCars => {
-                if (availableCars.length == 0) {
-                    // return error if there are no cars available
-                    return res.status(400).json({ message: "No cars are available at the moment." });
-                } else {
-                    // return all available cars
-                    return res.status(200).json({ availableCars: availableCars });
-                }
-            });
+        res.status(200).json({
+            message: 'Available cars found successfully',
+            cars: availableCars
         });
-    });
-}
+    } catch (err) {
+        console.error('Error finding available cars:', err);
+        res.status(500).json({ error: err.message });
+    }
+};
 
 // search for available cars in specific timeframe with filters
 exports.filter_cars = (req, res, next) => {

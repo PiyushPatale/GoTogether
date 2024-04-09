@@ -4,16 +4,13 @@ const mongoose = require('mongoose');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
-const selectFields = '_id firstname lastname email password usertype';
+const selectFields = '_id firstname lastname email password phone usertype';
 
-/* CONTROLLERS WITH NO JWT GUARDING */
 // create a user object
 exports.create_user = (req, res, next) => {
-    // check if user with the same email exists
 
     User.findOne({ email: req.body.email }).then(user => {
         if (user) {
-            // return error if user with the same email exists
             return res.status(400).json({ message: "Email already exists" });
         } else {
             // create a user object
@@ -23,19 +20,19 @@ exports.create_user = (req, res, next) => {
                 lastname: req.body.lastname,
                 email: req.body.email,
                 password: req.body.password,
+                phone: req.body.phone,
                 usertype: req.body.usertype
             });
+            console.log("hi");
+            console.log(req.body.phone);
             // generate salt for password hashing
             bcrypt.genSalt(10, (err, salt) => {
-                // hash user's password
                 bcrypt.hash(user.password, salt, (err, hash) => {
                     if (err)
-                        // return error if there's any with password hashing
                         return res.status(500).json({ message: err.message });
                     // attach hashed password to user object
                     user.password = hash;
                     user.save().then(user => {
-                        // wrap and return user object in response
                         const response = {
                             message: `Created user of id '${user._id}' successfully`,
                             user: user
@@ -53,7 +50,6 @@ exports.create_user = (req, res, next) => {
 
 // login a user
 exports.login_user = (req, res) => {
-    // obtain email and password from request body
     const email = req.body.email;
     const password = req.body.password;
 
@@ -75,6 +71,7 @@ exports.login_user = (req, res) => {
                     firstname: user.firstname,
                     lastname: user.lastname,
                     email: user.email,
+                    phone: user.phone,
                     usertype: user.usertype
                 };
                 // attach payload sign JWT generated
@@ -99,14 +96,12 @@ exports.login_user = (req, res) => {
     });
 }
 
-/* CONTROLLERS WITH JWT GUARDING */
+
 // get all users in the system
 exports.get_all_users = (req, res, next) => {
-    // obtain JWT from authorization header and remove Bearer keyword
     var token = req.headers['authorization'].replace(/^Bearer\s/, '');
 
     if (!token)
-        // return 401 response if JWT doesn't exist in request
         return res.status(401).send({ auth: false, message: 'No token provided.' });
 
     // attempt to verify JWT
@@ -116,7 +111,7 @@ exports.get_all_users = (req, res, next) => {
             return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
         // restrict feature to staff only
         if (decoded.usertype !== 'staff' && decoded.usertype !== 'admin') {
-            return res.status(500).json({ message: `Unable to perform action, you have to be staff member!` });
+            return res.status(500).json({ message: `Unable to perform get all users action, you have to be staff member!` });
         } else {
             // get all users from database
             User.find()
@@ -132,6 +127,7 @@ exports.get_all_users = (req, res, next) => {
                                 lastname: user.lastname,
                                 email: user.email,
                                 password: user.password,
+                                phone: user.phone,
                                 usertype: user.usertype
                             }
                         })
@@ -163,7 +159,7 @@ exports.check_email_taken = (req, res, next) => {
 
         // restrict feature to staff only
         if (decoded.usertype !== 'staff' && decoded.usertype !== 'admin') {
-            return res.status(500).json({ message: `Unable to perform action, you have to be staff member!` });
+            return res.status(500).json({ message: `Unable to perform check email action, you have to be staff member!` });
         } else {
             // find user by email and return boolean if user exists or not
             User.findOne({ email: req.body.email }).then(user => {
@@ -194,7 +190,7 @@ exports.get_all_customers = (req, res, next) => {
 
         // restrict feature to staff only
         if (decoded.usertype !== 'staff' && decoded.usertype !== 'admin') {
-            return res.status(500).json({ message: `Unable to perform action, you have to be staff member!` });
+            return res.status(500).json({ message: `Unable to perform get all customers action, you have to be staff member!` });
         } else {
             // get all customers from database
             User.find({ usertype: "customer" })
@@ -224,37 +220,28 @@ exports.get_all_customers = (req, res, next) => {
 
 // get user by id
 exports.get_user = (req, res, next) => {
-    // obtain JWT from authorization header and remove Bearer keyword
-    var token = req.headers['authorization'].replace(/^Bearer\s/, '');
-
-    if (!token)
-        // return 401 response if JWT doesn't exist in request
-        return res.status(401).send({ auth: false, message: 'No token provided.' });
-
-    // attempt to verify JWT
-    jwt.verify(token, keys.secretOrKey, function (err, decoded) {
-        if (err)
-            // return error if JWT is invalid
-            return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-
-        // obtain user id from request parameters
+    
         const id = req.params.userId;
+        console.log(id);
         // get user by id from database
         User.findOne({ _id: id })
             .select(selectFields)
             .exec()
             .then(user => {
+                console.log(id);
+                console.log(user);
                 // wrap and return user object in response
                 const response = {
                     user: user
                 }
+                console.log(response);
                 res.status(200).json(response);
             })
             .catch(error => {
                 // return error if there's any
                 res.status(500).json({ message: `Unable to GET user of id '${id}'`, error: error });
             })
-    });
+
 }
 
 // delete user by id
@@ -274,7 +261,7 @@ exports.delete_user = (req, res, next) => {
 
         // restrict feature to staff only
         if (decoded.usertype !== 'staff' && decoded.usertype !== 'admin') {
-            return res.status(500).json({ message: `Unable to perform action, you have to be staff member!` });
+            return res.status(500).json({ message: `Unable to perform delete user action, you have to be staff member!` });
         } else {
             // obtain user id from request parameters
             const id = req.params.userId;
@@ -314,7 +301,7 @@ exports.update_user = (req, res, next) => {
 
         // restrict feature to staff only
         if (decoded.usertype !== 'staff' && decoded.usertype !== 'admin') {
-            return res.status(500).json({ message: `Unable to perform action, you have to be staff member!` });
+            return res.status(500).json({ message: `Unable to perform update user action, you have to be staff member!` });
         } else {
             // obtain user id from request parameters
             const id = req.params.userId;

@@ -1,4 +1,4 @@
-#landing-body {
+#landing-body-body {
     padding: 0 10vh;
     padding-bottom: 10vh;
 }
@@ -9,7 +9,10 @@
     margin-bottom: 8vh;
 }
 
-.nav-link {
+.nav-link-ofaq {
+    color: white;
+}
+.nav-link-ofaq:hover {
     color: white;
 }
 

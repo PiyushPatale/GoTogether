@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { Container, Col, Row, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPiggyBank, faCar, faPhone, faMoneyBill } from '@fortawesome/free-solid-svg-icons';
+import { faPiggyBank, faCar, faUsers, faMoneyBill } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/overview.css';
 
 export default class Overview extends Component {
@@ -21,29 +21,28 @@ export default class Overview extends Component {
                             </Col>
                             <Col>
                                 <div className="how-it-works">
-                                    <h3>Book</h3>
-                                    <p>Checkout your nearest cars <a href="/locations">here</a>, then head over to dashboard, pick a time range to get started!</p>
+                                    <h3>Create Trip</h3>
+                                    <p>Add the details of your trip and wait for a companion to book your trip</p>
                                 </div>
                             </Col>
                             <Col>
                                 <div className="how-it-works">
-                                    <h3>Unlock</h3>
-                                    <p>Go up to the car on your time of choice and unlock the car.</p>
+                                    <h3>Search Trip</h3>
+                                    <p>Look for a ride with someone having the same destination as you</p>
                                 </div>
                             </Col>
                             <Col>
                                 <div className="how-it-works">
-                                    <h3>Drive</h3>
-                                    <p>Enjoy driving your car</p>
+                                    <h3>Dashboard</h3>
+                                    <p>Keep track of your previous and next trips</p>
                                 </div>
                             </Col>
                         </Row>
                         <div className="benefits-div">
                             <h2>Benefits</h2>
-                            <p>
-                                MZA Car Share gives you access to cars 24/7 without the hassle of owning one.
-                                You can rent a car from just $13 an hour, with fuel, insurance and Roadside assistance included.
-                            </p>
+                            {/* <p>
+                                GoTogether gives you access to various benefits.
+                            </p> */}
                             <Row>
                                 <Col>
                                     <div className="benefits-white-cards">
@@ -56,7 +55,7 @@ export default class Overview extends Component {
                                     <div className="benefits-white-cards">
                                         <FontAwesomeIcon icon={faMoneyBill} size="3x" />
                                         <h3>No Membership Fee</h3>
-                                        <p>You only pay for the car's rent</p>
+                                        <p>You only pay the trip provider</p>
                                     </div>
                                 </Col>
                             </Row>
@@ -64,15 +63,15 @@ export default class Overview extends Component {
                                 <Col>
                                     <div className="benefits-white-cards">
                                         <FontAwesomeIcon icon={faCar} size="3x" />
-                                        <h3>Cheaper than owning a car</h3>
-                                        <p>Much more ecomonic than buying and maintaing a car</p>
+                                        <h3>Convenient than driving your own car</h3>
+                                        <p>Much more ecomonic and hassle-free</p>
                                     </div>
                                 </Col>
                                 <Col>
                                     <div className="benefits-white-cards">
-                                        <FontAwesomeIcon icon={faPhone} size="3x" />
-                                        <h3>Roadside Assistance</h3>
-                                        <p>Easily get in touch with one of our assistance if you have any issues on the road</p>
+                                        <FontAwesomeIcon icon={faUsers} size="3x" />
+                                        <h3>Ride Companion</h3>
+                                        <p>Make new friends through your journey</p>
                                     </div>
                                 </Col>
                             </Row>
@@ -81,10 +80,10 @@ export default class Overview extends Component {
                         </Row>
                     </Container>
                     <div className="find-nearest-car-div">
-                        <h2>Find your nearest MZA Car Share Garage</h2>
-                        <p>Our cars are spread all over Melbourne. There's probably one near you</p>
+                        <h2>About Us</h2>
+                        <p>Get to know more about us using the button below</p>
                         <div>
-                            <Button href="/locations">Check out our locations</Button>
+                            <Button href="/aboutus">Details</Button>
                         </div>
                     </div>
                 </div>

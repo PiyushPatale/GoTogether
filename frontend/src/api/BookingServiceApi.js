@@ -2,7 +2,7 @@
 import axios from 'axios';
 import UserServiceApi from './UserServiceApi';
 //require('dotenv').config();
-const api_url = "http://localhost:3000/api/bookings";
+const api_url = "http://localhost:7000/api/bookings";
 
 class BookingServiceApi {
     getNextBooking() {
@@ -14,7 +14,8 @@ class BookingServiceApi {
     }
 
     getUserBookings(userId) {
-        return axios.get(`${api_url}/customers/all/${userId}`, { headers: { authorization: UserServiceApi.getUserToken() } });
+        console.log(userId);
+        return axios.post(`${api_url}/customers/all/id`, userId);
     }
 
     getUserBooking(bookingId) {
@@ -26,11 +27,11 @@ class BookingServiceApi {
     }
 
     getAllBookings() {
-        return axios.get(`${api_url}/customers/all`, { headers: { authorization: UserServiceApi.getUserToken() } });
+        return axios.get(`${api_url}/customers/all`);
     }
 
     getBooking(bookingId) {
-        return axios.get(`${api_url}/${bookingId}`, { headers: { authorization: UserServiceApi.getUserToken() } });
+        return axios.get(`${api_url}/${bookingId}`);
     }
 }
 

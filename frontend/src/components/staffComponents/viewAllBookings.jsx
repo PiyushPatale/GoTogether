@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Alert, Button, Table, Container } from 'react-bootstrap';
 import BookingServiceApi from '../../api/BookingServiceApi';
 const { default: LocationServiceApi } = require("../../api/LocationServiceApi");
-const { default: CarServiceApi } = require("../../api/CarServiceApi");
+const { default: UserServiceApi } = require("../../api/UserServiceApi");
 
 export default class ViewAllBookingsPage extends Component {
     constructor(props) {
@@ -18,37 +18,58 @@ export default class ViewAllBookingsPage extends Component {
 
     componentDidMount() {
         // obtain all bookings, locations and cars for rendering
-        BookingServiceApi.getAllBookings().then(res => {
-            this.setState({
-                // sort bookings by latest
-                bookings: res.data.bookings.reverse()
-            });
-        }).catch((error) => {
-            this.setState({ errorMessage: error.response.data.message });
+        BookingServiceApi.getAllBookings()
+        .then(async (res) => {
+        console.log("Bookings response:", res.data);
+
+        // Array to store promises of fetching user details
+        const userPromises = res.data.bookings.map(async (booking) => {
+          try {
+            // Fetch user details for bookedBy and createdBy
+            const locationResponse = await LocationServiceApi.getLocationFromId(booking.tripId);
+            const bookedByResponse = await UserServiceApi.getUserFromId(booking.bookedBy);
+            const createdByResponse = await UserServiceApi.getUserFromId(booking.createdBy);
+
+            console.log(booking.tripId);
+            console.log(booking.createdBy);
+
+            // Update booking object with user names
+            console.log(locationResponse.data)
+            return {
+              ...booking,
+              bookedByName: bookedByResponse.data.user.firstname + " " + bookedByResponse.data.user.lastname ,
+              createdByName: createdByResponse.data.user.firstname + " " + createdByResponse.data.user.lastname,
+              from: locationResponse.data.from,
+              to: locationResponse.data.to,
+              startTime: locationResponse.data.startTime.toLocaleString().replace("T", " "),
+              cost: locationResponse.data.cost,
+            };
+          } catch (error) {
+            console.error("Error fetching user details:", error);
+            // Return booking without user names if an error occurs
+            return {
+              ...booking,
+              bookedByName: "N/A",
+              createdByName: "N/A"
+            };
+          }
         });
-        LocationServiceApi.getAllLocations()
-            .then(res => {
-                let locationArray = this.state.locations;
-                res.data.forEach(location => {
-                    let locationObject = {
-                        id: location._id,
-                        address: location.address,
-                        name: location.name
-                    };
-                    locationArray.push(locationObject);
-                    this.setState({ locations: locationArray });
-                });
-            }).catch((error) => {
-                this.setState({ errorMessage: error.response.data.message });
-            })
-        CarServiceApi.getAllCars()
-            .then(res => {
-                this.setState({
-                    cars: res.data.cars
-                });
-            }).catch((error) => {
-                this.setState({ errorMessage: error.response.data.message });
-            });
+
+        // Wait for all user detail promises to resolve
+        const bookingsWithUserDetails = await Promise.all(userPromises);
+
+        this.setState({
+          bookings: bookingsWithUserDetails,
+          errorMessage: "",
+        });
+
+        console.log(this.state.bookings);
+        console.log(res.data.bookings);
+      })
+      .catch((error) => {
+        console.error("Error fetching bookings:", error);
+        this.setState({ errorMessage: error.response.data.message });
+      });
     }
 
     render() {
@@ -65,61 +86,23 @@ export default class ViewAllBookingsPage extends Component {
                     <thead>
                         <tr>
                             <th>Booking ID</th>
-                            <th>User ID</th>
-                            <th>Booked Time</th>
-                            <th>Pickup Time</th>
-                            <th>Return Time</th>
-                            <th>Car ID</th>
+                            <th>Created By</th>
+                            <th>Booked By</th>
+                            <th>From</th>
+                            <th>To</th>
                             <th>Cost</th>
-                            <th>Location</th>
-                            <th>Address</th>
-                            <th>Status</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {this.state.bookings.map(booking =>
                             <tr>
-                                <td>{booking.id}</td>
-                                <td><a href={`/admin/view/customers/${booking.user}`}>{booking.user}</a></td>
-                                <td>{booking.bookedtime}</td>
-                                <td>{booking.pickuptime}</td>
-                                <td>{booking.returntime}</td>
-                                <td>
-                                    {this.state.cars.map(car =>
-                                        <>
-                                            {car.id === booking.car &&
-                                                <>
-                                                    <a href={`/admin/view/cars/${booking.car}`}>{car.make}</a>
-                                                </>
-                                            }
-                                        </>
-                                    )}
-                                </td>
-                                <td>${booking.cost}</td>
-                                <td>
-                                    {this.state.locations.map(location =>
-                                        <>
-                                            {location.id === booking.location &&
-                                                <>
-                                                    <a href={`/admin/view/location/${booking.location}`}>{location.name}</a>
-                                                </>
-                                            }
-                                        </>
-                                    )}
-                                </td>
-                                <td>
-                                    {this.state.locations.map(location =>
-                                        <>
-                                            {location.id === booking.location &&
-                                                <>
-                                                    {location.address}
-                                                </>
-                                            }
-                                        </>
-                                    )}
-                                </td>
-                                <td>{booking.status}</td>
+                                <td>{booking._id}</td>
+                                <td>{booking.bookedByName}</td>
+                                <td>{booking.createdByName}</td>
+                                <td>{booking.from}</td>
+                                <td>{booking.to}</td>
+                                <td>₹ {booking.cost}</td>
                                 <td>
                                     <Button href={`/admin/view/bookings/${booking.id}`}>View</Button>
                                 </td>

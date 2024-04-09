@@ -44,7 +44,7 @@ export default class Cars extends Component {
                     </Container>
                 </div>
                 <div className="find-nearest-car-div">
-                    <h2>Find your nearest MZA Car Share Garage</h2>
+                    <h2>GoTogether: An Efficient and Better Way</h2>
                     <p>Our cars are spread all over Melbourne. There's probably one near you</p>
                     <div>
                         <Button href="/locations">Check out our locations</Button>

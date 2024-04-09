@@ -1,7 +1,7 @@
 /* Location service APIs */
 import axios from 'axios';
 //require('dotenv').config();
-const api_url = "http://localhost:3000/api/locations";
+const api_url = "http://localhost:7000/api/locations";
 
 class LocationServiceApi {
     getAllLocations() {
@@ -13,6 +13,7 @@ class LocationServiceApi {
     }
 
     createNewLocation(newLocation) {
+        console.log(newLocation);
         return axios.post(api_url, newLocation);
     }
 

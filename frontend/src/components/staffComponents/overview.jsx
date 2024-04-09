@@ -12,7 +12,7 @@ export default class overview extends Component {
                 <strong>Last name: </strong>{userData.lastname} <br></br>
                 <strong>Email: </strong>{userData.email} <br></br>
                 <strong>Staff ID: </strong>{userData.id} <br></br>
-                <strong>Staff type: </strong>{userData.usertype} <br></br>
+                <strong>Staff type: </strong>Admin <br></br>
             </div>
         )
     }
